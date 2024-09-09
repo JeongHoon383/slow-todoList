@@ -17,7 +17,7 @@ function App() {
   const todos = useSelector((state) => state.todos.list);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [newTodo, setNewTodo] = useState(null); // 상태로 저장 후 effect에서 처리
+  const [newTodo, setNewTodo] = useState(null);
 
   const onAddTodo = () => {
     if (title.trim() === "" || body.trim() === "") {

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { waitTwoSeconds } from "../../utils"; // 2초 지연 함수
+import { waitTwoSeconds } from "../../utils";
 
 export const __addToDo = createAsyncThunk(
   "__addToDo",
