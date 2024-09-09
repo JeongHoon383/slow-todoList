@@ -1,24 +1,89 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  InputContainer,
+  PageWrapper,
+  TodoCard,
+  TodoContainer,
+  TodoHeader,
+  TodoListContainer,
+} from "./components/styles";
+import nextId from "react-id-generator";
+import { useDispatch, useSelector } from "react-redux";
+import { __addToDo, __deleteToDo } from "./redux/modules/todosSlice";
 
 function App() {
+  const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todos.list);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [newTodo, setNewTodo] = useState(null); // 상태로 저장 후 effect에서 처리
+
+  const onAddTodo = () => {
+    if (title.trim() === "" || body.trim() === "") {
+      alert("제목과 내용을 모두 입력하세요!");
+      return;
+    }
+
+    const todo = {
+      id: nextId(),
+      title,
+      body,
+    };
+
+    setNewTodo(todo);
+    resetInputs();
+  };
+
+  useEffect(() => {
+    if (newTodo) {
+      dispatch(__addToDo(newTodo));
+    }
+  }, [newTodo, dispatch]);
+
+  const onDeleteTodo = (id) => {
+    dispatch(__deleteToDo(id));
+  };
+
+  const resetInputs = () => {
+    setTitle("");
+    setBody("");
+  };
+
+  const onChangeTitle = (e) => setTitle(e.target.value);
+  const onChangeBody = (e) => setBody(e.target.value);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <PageWrapper>
+      <TodoContainer>
+        <TodoHeader>🐢 SLOW TODO LIST 🐢</TodoHeader>
+        <InputContainer>
+          <span>제목: </span>
+          <input
+            value={title}
+            placeholder="할 일 제목"
+            onChange={onChangeTitle}
+          />
+          <span>내용: </span>
+          <input
+            value={body}
+            placeholder="할 일 내용"
+            onChange={onChangeBody}
+          />
+          <Button onClick={onAddTodo}>+ 추가하기</Button>
+        </InputContainer>
+
+        <TodoListContainer>
+          {todos.map((todo) => (
+            <TodoCard key={todo.id}>
+              <span>제목: {todo.title}</span>
+              <span>할 일: {todo.body}</span>
+              <Button onClick={() => onDeleteTodo(todo.id)}>삭제하기</Button>
+            </TodoCard>
+          ))}
+        </TodoListContainer>
+      </TodoContainer>
+    </PageWrapper>
   );
 }
 
